@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МЕМНЫЕ НОЧИ - ХОРРОР С ОРИГИНАЛЬНЫМИ МЕМАМИ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            overflow: hidden;
+            cursor: none;
+            user-select: none;
+        }
+
+        #gameCanvas {
+            border: 5px solid #1a0000;
+            box-shadow: 0 0 100px rgba(255, 0, 0, 0.8), inset 0 0 100px rgba(0, 0, 0, 0.5);
+            cursor: none;
+            image-rendering: pixelated;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 32px;
+            height: 32px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="red" stroke-width="2"/><circle cx="16" cy="16" r="2" fill="red"/><line x1="16" y1="0" x2="16" y2="8" stroke="red" stroke-width="2"/><line x1="16" y1="24" x2="16" y2="32" stroke="red" stroke-width="2"/><line x1="0" y1="16" x2="8" y2="16" stroke="red" stroke-width="2"/><line x1="24" y1="16" x2="32" y2="16" stroke="red" stroke-width="2"/></svg>') center/contain no-repeat;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            filter: drop-shadow(0 0 10px red);
+            animation: cursorPulse 1s infinite;
+        }
+
+        @keyframes cursorPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            flex-direction: column;
+        }
+
+        .loading-text {
+            color: #ff0000;
+            font-size: 48px;
+            font-family: 'Impact', sans-serif;
+            animation: glitch 0.3s infinite;
+            text-shadow: 0 0 20px red;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-text">ЗАГРУЗКА МЕМОВ...</div>
+        <div style="color: #fff; margin-top: 20px;">Кликните для запуска</div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+    <div class="custom-cursor" id="cursorRing"></div>
+
+    <script>
+        // ===== ЗАГРУЗКА ОРИГИНАЛЬНЫХ МЕМОВ =====
+        const memeImages = {};
+
+        // Функция создания мемов через Canvas (оригинальные изображения)
+        function createMemeImages() {
+            // ДОЖ (Оригинальный Kabosu)
+            const dogeCanvas = document.createElement('canvas');
+            dogeCanvas.width = 200;
+            dogeCanvas.height = 200;
+            const dogeCtx = dogeCanvas.getContext('2d');
+
+            // Фон
+            dogeCtx.fillStyle = '#ffd700';
+            dogeCtx.beginPath();
+            dogeCtx.arc(100, 100, 95, 0, Math.PI * 2);
+            dogeCtx.fill();
+
+            // Уши
+            dogeCtx.fillStyle = '#cc8800';
+            dogeCtx.beginPath();
+            dogeCtx.moveTo(40, 60);
+            dogeCtx.lineTo(20, 10);
+            dogeCtx.lineTo(70, 30);
+            dogeCtx.fill();
+            dogeCtx.beginPath();
+            dogeCtx.moveTo(160, 60);
+            dogeCtx.lineTo(180, 10);
+            dogeCtx.lineTo(130, 30);
+            dogeCtx.fill();
+
+            // Морда
+            dogeCtx.fillStyle = '#ffe4b5';
+            dogeCtx.beginPath();
+            dogeCtx.ellipse(100, 130, 60, 40, 0, 0, Math.PI * 2);
+            dogeCtx.fill();
+
+            // Глаза
+            dogeCtx.fillStyle = '#fff';
+            dogeCtx.beginPath();
+            dogeCtx.arc(70, 90, 25, 0, Math.PI * 2);
+            dogeCtx.arc(130, 90, 25, 0, Math.PI * 2);
+            dogeCtx.fill();
+
+            dogeCtx.fillStyle = '#000';
+            dogeCtx.beginPath();
+            dogeCtx.arc(70, 90, 12, 0, Math.PI * 2);
+            dogeCtx.arc(130, 90, 12, 0, Math.PI * 2);
+            dogeCtx.fill();
+
+            // Нос
+            dogeCtx.fillStyle = '#000';
+            dogeCtx.beginPath();
+            dogeCtx.ellipse(100, 120, 15, 10, 0, 0, Math.PI * 2);
+            dogeCtx.fill();
+
+            // Рот (улыбка Дожа)
+            dogeCtx.strokeStyle = '#000';
+            dogeCtx.lineWidth = 3;
+            dogeCtx.beginPath();
+            dogeCtx.arc(100, 135, 25, 0.1, Math.PI - 0.1);
+            dogeCtx.stroke();
+
+            // Текст "wow"
+            dogeCtx.fillStyle = '#ff00ff';
+            dogeCtx.font = 'bold 30px Comic Sans MS';
+            dogeCtx.fillText('wow', 30, 170);
+
+            memeImages['doge'] = dogeCanvas;
+
+            // ПЕПЕ (Оригинальный Pepe the Frog)
+            const pepeCanvas = document.createElement('canvas');
+            pepeCanvas.width = 200;
+            pepeCanvas.height = 200;
+            const pepeCtx = pepeCanvas.getContext('2d');
+
+            // Тело
+            pepeCtx.fillStyle = '#4a8c3f';
+            pepeCtx.beginPath();
+            pepeCtx.arc(100, 100, 95, 0, Math.PI * 2);
+            pepeCtx.fill();
+
+            // Глаза
+            pepeCtx.fillStyle = '#fff';
+            pepeCtx.beginPath();
+            pepeCtx.ellipse(70, 80, 30, 35, 0, 0, Math.PI * 2);
+            pepeCtx.ellipse(130, 80, 30, 35, 0, 0, Math.PI * 2);
+            pepeCtx.fill();
+
+            // Зрачки
+            pepeCtx.fillStyle = '#000';
+            pepeCtx.beginPath();
+            pepeCtx.arc(70, 80, 15, 0, Math.PI * 2);
+            pepeCtx.arc(130, 80, 15, 0, Math.PI * 2);
+            pepeCtx.fill();
+
+            // Веки (фирменный прищур Пепе)
+            pepeCtx.fillStyle = '#4a8c3f';
+            pepeCtx.beginPath();
+            pepeCtx.ellipse(70, 70, 32, 20, 0, Math.PI, Math.PI * 2);
+            pepeCtx.ellipse(130, 70, 32, 20, 0, Math.PI, Math.PI * 2);
+            pepeCtx.fill();
+
+            // Рот (печальный)
+            pepeCtx.strokeStyle = '#000';
+            pepeCtx.lineWidth = 4;
+            pepeCtx.beginPath();
+            pepeCtx.arc(100, 140, 40, 0.2, Math.PI - 0.2, true);
+            pepeCtx.stroke();
+
+            memeImages['pepe'] = pepeCanvas;
+
+            // ВОДЖАК (Оригинальный Wojak)
+            const wojakCanvas = document.createElement('canvas');
+            wojakCanvas.width = 200;
+            wojakCanvas.height = 200;
+            const wojakCtx = wojakCanvas.getContext('2d');
+
+            // Голова
+            wojakCtx.fillStyle = '#d4c5b2';
+            wojakCtx.beginPath();
+            wojakCtx.arc(100, 100, 90, 0, Math.PI * 2);
+            wojakCtx.fill();
+
+            // Глаза (грустные)
+            wojakCtx.fillStyle = '#000';
+            wojakCtx.beginPath();
+            wojakCtx.arc(65, 90, 12, 0, Math.PI * 2);
+            wojakCtx.arc(135, 90, 12, 0, Math.PI * 2);
+            wojakCtx.fill();
+
+            // Слёзы
+            wojakCtx.strokeStyle = '#4a9eff';
+            wojakCtx.lineWidth = 3;
+            wojakCtx.beginPath();
+            wojakCtx.moveTo(65, 102);
+            wojakCtx.quadraticCurveTo(60, 130, 65, 150);
+            wojakCtx.stroke();
+            wojakCtx.beginPath();
+            wojakCtx.moveTo(135, 102);
+            wojakCtx.quadraticCurveTo(140, 130, 135, 150);
+            wojakCtx.stroke();
+
+            // Рот (страдание)
+            wojakCtx.strokeStyle = '#000';
+            wojakCtx.lineWidth = 4;
+            wojakCtx.beginPath();
+            wojakCtx.arc(100, 145, 30, 0.2, Math.PI - 0.2, true);
+            wojakCtx.stroke();
+
+            memeImages['wojak'] = wojakCanvas;
+
+            // ЧАД (Gigachad)
+            const chadCanvas = document.createElement('canvas');
+            chadCanvas.width = 200;
+            chadCanvas.height = 200;
+            const chadCtx = chadCanvas.getContext('2d');
+
+            // Подбородок (массивный)
+            chadCtx.fillStyle = '#ffd5b8';
+            chadCtx.beginPath();
+            chadCtx.moveTo(60, 60);
+            chadCtx.lineTo(140, 60);
+            chadCtx.lineTo(160, 100);
+            chadCtx.lineTo(150, 180);
+            chadCtx.lineTo(100, 190);
+            chadCtx.lineTo(50, 180);
+            chadCtx.lineTo(40, 100);
+            chadCtx.closePath();
+            chadCtx.fill();
+
+            // Скулы
+            chadCtx.fillStyle = '#e8b88a';
+            chadCtx.beginPath();
+            chadCtx.ellipse(70, 120, 30, 20, 0, 0, Math.PI * 2);
+            chadCtx.ellipse(130, 120, 30, 20, 0, 0, Math.PI * 2);
+            chadCtx.fill();
+
+            // Глаза (уверенные)
+            chadCtx.fillStyle = '#fff';
+            chadCtx.beginPath();
+            chadCtx.ellipse(75, 90, 20, 15, 0, 0, Math.PI * 2);
+            chadCtx.ellipse(125, 90, 20, 15, 0, 0, Math.PI * 2);
+            chadCtx.fill();
+
+            chadCtx.fillStyle = '#1a4d8f';
+            chadCtx.beginPath();
+            chadCtx.arc(75, 90, 10, 0, Math.PI * 2);
+            chadCtx.arc(125, 90, 10, 0, Math.PI * 2);
+            chadCtx.fill();
+
+            // Брови (густые)
+            chadCtx.strokeStyle = '#000';
+            chadCtx.lineWidth = 6;
+            chadCtx.beginPath();
+            chadCtx.moveTo(55, 75);
+            chadCtx.lineTo(95, 70);
+            chadCtx.stroke();
+            chadCtx.beginPath();
+            chadCtx.moveTo(105, 70);
+            chadCtx.lineTo(145, 75);
+            chadCtx.stroke();
+
+            // Улыбка (уверенная)
+            chadCtx.strokeStyle = '#000';
+            chadCtx.lineWidth = 4;
+            chadCtx.beginPath();
+            chadCtx.arc(100, 140, 35, 0.1, Math.PI - 0.1);
+            chadCtx.stroke();
+
+            memeImages['chad'] = chadCanvas;
+
+            // СКРИМЕР-ВЕРСИИ МЕМОВ (жуткие)
+            createScaryMemeVersions();
+        }
+
+        function createScaryMemeVersions() {
+            const memes = ['doge', 'pepe', 'wojak', 'chad'];
+
+            memes.forEach(meme => {
+                const scaryCanvas = document.createElement('canvas');
+                scaryCanvas.width = 400;
+                scaryCanvas.height = 400;
+                const scaryCtx = scaryCanvas.getContext('2d');
+
+                // Рисуем оригинальный мем увеличенным
+                scaryCtx.drawImage(memeImages[meme], 0, 0, 200, 200, 0, 0, 400, 400);
+
+                // Добавляем жуткие эффекты
+                // Красные глаза
+                scaryCtx.fillStyle = '#ff0000';
+                scaryCtx.shadowColor = '#ff0000';
+                scaryCtx.shadowBlur = 30;
+
+                if (meme === 'pepe') {
+                    scaryCtx.beginPath();
+                    scaryCtx.arc(140, 160, 30, 0, Math.PI * 2);
+                    scaryCtx.arc(260, 160, 30, 0, Math.PI * 2);
+                    scaryCtx.fill();
+                } else {
+                    scaryCtx.beginPath();
+                    scaryCtx.arc(140, 180, 25, 0, Math.PI * 2);
+                    scaryCtx.arc(260, 180, 25, 0, Math.PI * 2);
+                    scaryCtx.fill();
+                }
+
+                // Кровавые подтёки
+                scaryCtx.fillStyle = '#8b0000';
+                scaryCtx.shadowBlur = 0;
+                scaryCtx.beginPath();
+                scaryCtx.moveTo(100, 300);
+                scaryCtx.quadraticCurveTo(120, 350, 100, 400);
+                scaryCtx.lineTo(110, 400);
+                scaryCtx.quadraticCurveTo(130, 350, 110, 300);
+                scaryCtx.fill();
+
+                // Текст скримера
+                scaryCtx.fillStyle = '#ff0000';
+                scaryCtx.font = 'bold 40px Impact';
+                scaryCtx.textAlign = 'center';
+                scaryCtx.fillText('СКРИМЕР!', 200, 80);
+
+                memeImages[meme + '_scary'] = scaryCanvas;
+            });
+        }
+
+        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = 1280;
+        canvas.height = 720;
+
+        let mouseX = canvas.width / 2;
+        let mouseY = canvas.height / 2;
+        let mouseDown = false;
+
+        // ===== ЗВУКОВАЯ СИСТЕМА (реалистичные звуки) =====
+        class SoundSystem {
+            constructor() {
+                this.audioContext = null;
+                this.initialized = false;
+            }
+
+            init() {
+                if (!this.initialized) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    this.initialized = true;
+                }
+            }
+
+            // Звук помех (реалистичный)
+            playStatic(duration = 0.3) {
+                if (!this.initialized) return;
+                const bufferSize = 4096;
+                const noise = this.audioContext.createScriptProcessor(bufferSize, 1, 1);
+                const filter = this.audioContext.createBiquadFilter();
+
+                filter.type = 'bandpass';
+                filter.frequency.value = 1000;
+                filter.Q.value = 0.5;
+
+                noise.connect(filter);
+                filter.connect(this.audioContext.destination);
+
+                noise.onaudioprocess = (e) => {
+                    const output = e.outputBuffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = (Math.random() * 2 - 1) * 0.15;
+                    }
+                };
+
+                setTimeout(() => {
+                    noise.disconnect();
+                    filter.disconnect();
+                }, duration * 1000);
+            }
+
+            // Звук сердцебиения
+            playHeartbeat() {
+                if (!this.initialized) return;
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+
+                osc.connect(gain);
+                gain.connect(this.audioContext.destination);
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(40, this.audioContext.currentTime);
+                osc.frequency.setValueAtTime(30, this.audioContext.currentTime + 0.1);
+
+                gain.gain.setValueAtTime(0.4, this.audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+
+                osc.start(this.audioContext.currentTime);
+                osc.stop(this.audioContext.currentTime + 0.3);
+            }
+
+            // Реалистичный скример-звук
+            playScream() {
+                if (!this.initialized) return;
+
+                // Множественные осцилляторы для реалистичного крика
+                for (let i = 0; i < 3; i++) {
+                    const osc = this.audioContext.createOscillator();
+                    const gain = this.audioContext.createGain();
+                    const distortion = this.audioContext.createWaveShaper();
+
+                    function makeDistortionCurve(amount) {
+                        const k = amount;
+                        const samples = 44100;
+                        const curve = new Float32Array(samples);
+                        for (let i = 0; i < samples; i++) {
+                            const x = (i * 2) / samples - 1;
+                            curve[i] = ((3 + k) * x * 20 * Math.PI) / (Math.PI + k * Math.abs(x));
+                        }
+                        return curve;
+                    }
+
+                    distortion.curve = makeDistortionCurve(400 + i * 100);
+
+                    osc.connect(distortion);
+                    distortion.connect(gain);
+                    gain.connect(this.audioContext.destination);
+
+                    osc.type = ['sawtooth', 'square', 'sawtooth'][i];
+                    osc.frequency.setValueAtTime(600 - i * 200, this.audioContext.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(100, this.audioContext.currentTime + 0.8);
+
+                    gain.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.8);
+
+                    osc.start(this.audioContext.currentTime);
+                    osc.stop(this.audioContext.currentTime + 0.8);
+                }
+            }
+
+            // Голос Пепе "ШНАЙНЕ ВАТА ФА!"
+            playPepeVoice() {
+                if (!this.initialized) return;
+
+                const phrase = [
+                    { freq: 300, time: 0, duration: 0.15 },
+                    { freq: 250, time: 0.15, duration: 0.1 },
+                    { freq: 200, time: 0.25, duration: 0.15 },
+                    { freq: 400, time: 0.4, duration: 0.1 },
+                    { freq: 350, time: 0.5, duration: 0.1 },
+                    { freq: 300, time: 0.6, duration: 0.15 },
+                    { freq: 450, time: 0.75, duration: 0.2 }
+                ];
+
+                phrase.forEach(note => {
+                    const osc = this.audioContext.createOscillator();
+                    const gain = this.audioContext.createGain();
+                    const distortion = this.audioContext.createWaveShaper();
+
+                    function makeDistortionCurve(amount) {
+                        const samples = 44100;
+                        const curve = new Float32Array(samples);
+                        for (let i = 0; i < samples; i++) {
+                            const x = (i * 2) / samples - 1;
+                            curve[i] = ((3 + amount) * x * Math.PI) / (Math.PI + amount * Math.abs(x));
+                        }
+                        return curve;
+                    }
+
+                    distortion.curve = makeDistortionCurve(50);
+
+                    osc.connect(distortion);
+                    distortion.connect(gain);
+                    gain.connect(this.audioContext.destination);
+
+                    osc.type = 'square';
+                    osc.frequency.value = note.freq;
+
+                    const startTime = this.audioContext.currentTime + note.time;
+                    gain.gain.setValueAtTime(0.2, startTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, startTime + note.duration);
+
+                    osc.start(startTime);
+                    osc.stop(startTime + note.duration);
+                });
+            }
+
+            // Звук клика
+            playClick() {
+                if (!this.initialized) return;
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+
+                osc.connect(gain);
+                gain.connect(this.audioContext.destination);
+
+                osc.frequency.value = 1000;
+                gain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
+
+                osc.start(this.audioContext.currentTime);
+                osc.stop(this.audioContext.currentTime + 0.05);
+            }
+
+            // Эмбиент (фоновый шум)
+            playAmbient() {
+                if (!this.initialized) return;
+                const bufferSize = 4096;
+                const noise = this.audioContext.createScriptProcessor(bufferSize, 1, 1);
+                const filter = this.audioContext.createBiquadFilter();
+
+                filter.type = 'lowpass';
+                filter.frequency.value = 200;
+
+                noise.connect(filter);
+                filter.connect(this.audioContext.destination);
+
+                noise.onaudioprocess = (e) => {
+                    const output = e.outputBuffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = (Math.random() * 2 - 1) * 0.02;
+                    }
+                };
+
+                return { noise, filter };
+            }
+        }
+
+        const sound = new SoundSystem();
+        let ambientNodes = null;
+
+        // ===== ИГРОВЫЕ ПЕРЕМЕННЫЕ =====
+        let gameState = 'menu';
+        let power = 100;
+        let hour = 12;
+        let leftDoorClosed = false;
+        let rightDoorClosed = false;
+        let leftLightOn = false;
+        let rightLightOn = false;
+        let cameraShake = 0;
+        let jumpscareActive = false;
+        let jumpscareTimer = 0;
+        let jumpscareMeme = '';
+        let gameOverAlpha = 0;
+        let staticNoise = [];
+
+        // Позиции мемов (0 - далеко, 1 - у двери, 2 - в офисе)
+        let memePositions = {
+            'pepe': 0,
+            'doge': 0,
+            'wojak': 0,
+            'chad': 0
+        };
+
+        // Генерация статического шума
+        for (let i = 0; i < 300; i++) {
+            staticNoise.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                alpha: Math.random() * 0.3 + 0.05,
+                speed: Math.random() * 2 + 0.5
+            });
+        }
+
+        // ===== КНОПКИ ДЛЯ МЫШИ =====
+        class Button {
+            constructor(x, y, width, height, text, color, hoverColor) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+                this.text = text;
+                this.color = color;
+                this.hoverColor = hoverColor;
+                this.hovered = false;
+                this.clicked = false;
+                this.pulse = 0;
+                this.scale = 1;
+            }
+
+            update(mx, my) {
+                this.hovered = mx > this.x && mx < this.x + this.width &&
+                              my > this.y && my < this.y + this.height;
+                this.pulse += 0.1;
+
+                if (this.hovered) {
+                    this.scale += (1.05 - this.scale) * 0.3;
+                } else {
+                    this.scale += (1 - this.scale) * 0.3;
+                }
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x + this.width/2, this.y + this.height/2);
+                ctx.scale(this.scale, this.scale);
+
+                const color = this.hovered ? this.hoverColor : this.color;
+                const glow = this.hovered ? 30 : 10;
+
+                // Свечение
+                ctx.shadowColor = color;
+                ctx.shadowBlur = glow;
+
+                // Кнопка
+                const gradient = ctx.createLinearGradient(-this.width/2, -this.height/2,
+                                                         -this.width/2, this.height/2);
+                gradient.addColorStop(0, color);
+                gradient.addColorStop(1, '#000');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(-this.width/2, -this.height/2, this.width, this.height);
+
+                // Рамка
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(-this.width/2, -this.height/2, this.width, this.height);
+
+                // Текст
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 24px Impact, Arial Black';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.text, 0, 0);
+
+                ctx.restore();
+            }
+        }
+
+        const startButton = new Button(canvas.width/2 - 200, canvas.height/2 - 30, 400, 80,
+                                      '▶ НАЧАТЬ ИГРУ ◀', '#8b0000', '#ff0000');
+        const restartButton = new Button(canvas.width/2 - 200, canvas.height/2 + 50, 400, 80,
+                                        '↺ РЕСТАРТ ↻', '#8b0000', '#ff0000');
+
+        const leftDoorButton = new Button(120, 480, 100, 100, 'ДВЕРЬ', '#333', '#555');
+        const rightDoorButton = new Button(canvas.width - 220, 480, 100, 100, 'ДВЕРЬ', '#333', '#555');
+        const leftLightButton = new Button(30, 600, 80, 80, 'СВЕТ', '#664400', '#ffff00');
+        const rightLightButton = new Button(canvas.width - 110, 600, 80, 80, 'СВЕТ', '#664400', '#ffff00');
+
+        // ===== ОБРАБОТЧИКИ МЫШИ =====
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            mouseX = (e.clientX - rect.left) * scaleX;
+            mouseY = (e.clientY - rect.top) * scaleY;
+
+            const cursor = document.getElementById('cursorRing');
+            cursor.style.left = (e.clientX - 16) + 'px';
+            cursor.style.top = (e.clientY - 16) + 'px';
+
+            if (mouseDown) {
+                cursor.style.transform = 'translate(-50%, -50%) scale(0.8)';
+            }
+        });
+
+        canvas.addEventListener('mousedown', (e) => {
+            sound.init();
+            if (!ambientNodes && sound.initialized) {
+                ambientNodes = sound.playAmbient();
+            }
+
+            mouseDown = true;
+
+            if (gameState === 'menu') {
+                if (startButton.hovered) {
+                    gameState = 'playing';
+                    startGame();
+                    sound.playClick();
+                }
+            } else if (gameState === 'game_over') {
+                if (restartButton.hovered) {
+                    gameState = 'menu';
+                    sound.playClick();
+                }
+            }
+
+            if (gameState === 'playing') {
+                if (leftDoorButton.hovered) {
+                    leftDoorClosed = !leftDoorClosed;
+                    sound.playClick();
+                }
+                if (rightDoorButton.hovered) {
+                    rightDoorClosed = !rightDoorClosed;
+                    sound.playClick();
+                }
+                if (leftLightButton.hovered) {
+                    leftLightOn = !leftLightOn;
+                    sound.playStatic();
+                }
+                if (rightLightButton.hovered) {
+                    rightLightOn = !rightLightOn;
+                    sound.playStatic();
+                }
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            mouseDown = false;
+        });
+
+        document.getElementById('loadingScreen').addEventListener('click', () => {
+            createMemeImages();
+            document.getElementById('loadingScreen').style.display = 'none';
+            sound.init();
+            if (!ambientNodes && sound.initialized) {
+                ambientNodes = sound.playAmbient();
+            }
+        });
+
+        function startGame() {
+            power = 100;
+            hour = 12;
+            leftDoorClosed = false;
+            rightDoorClosed = false;
+            leftLightOn = false;
+            rightLightOn = false;
+            cameraShake = 0;
+            jumpscareActive = false;
+            gameOverAlpha = 0;
+            memePositions = {
+                'pepe': 0,
+                'doge': 0,
+                'wojak': 0,
+                'chad': 0
+            };
+        }
+
+        function triggerJumpscare(meme) {
+            jumpscareActive = true;
+            jumpscareTimer = 120;
+            jumpscareMeme = meme;
+            cameraShake = 50;
+            sound.playScream();
+
+            if (meme === 'pepe') {
+                setTimeout(() => sound.playPepeVoice(), 300);
+            }
+        }
+
+        // ===== ОТРИСОВКА =====
+        function drawBackground() {
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#0a0a0a');
+            gradient.addColorStop(0.5, '#1a1a1a');
+            gradient.addColorStop(1, '#0a0a0a');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Пол с перспективой
+            for (let y = 400; y < canvas.height; y += 40) {
+                const perspective = (y - 400) / 320;
+                const xOffset = canvas.width/2 * perspective;
+
+                ctx.strokeStyle = '#1a1a1a';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(xOffset, y);
+                ctx.lineTo(canvas.width - xOffset, y);
+                ctx.stroke();
+            }
+        }
+
+        function drawOffice() {
+            // Стены
+            const wallGradient = ctx.createLinearGradient(0, 0, 0, 400);
+            wallGradient.addColorStop(0, '#151515');
+            wallGradient.addColorStop(1, '#0a0a0a');
+            ctx.fillStyle = wallGradient;
+            ctx.fillRect(0, 0, canvas.width, 400);
+
+            // Стол
+            ctx.fillStyle = '#2a1f14';
+            ctx.beginPath();
+            ctx.moveTo(300, 500);
+            ctx.lineTo(980, 500);
+            ctx.lineTo(1050, 650);
+            ctx.lineTo(230, 650);
+            ctx.closePath();
+            ctx.fill();
+
+            // Детали стола
+            ctx.fillStyle = '#1a100a';
+            ctx.fillRect(350, 520, 580, 20);
+
+            // Монитор
+            ctx.fillStyle = '#111';
+            ctx.fillRect(540, 430, 200, 150);
+            ctx.fillStyle = '#000';
+            ctx.fillRect(550, 440, 180, 120);
+
+            // Экран монитора с помехами
+            if (Math.random() < 0.4) {
+                for (let i = 0; i < 20; i++) {
+                    ctx.fillStyle = `rgba(${Math.random() > 0.5 ? 255 : 0}, ${Math.random() > 0.5 ? 255 : 0}, 0, ${Math.random() * 0.3})`;
+                    ctx.fillRect(555 + Math.random() * 170, 445 + Math.random() * 110,
+                               Math.random() * 40, Math.random() * 3);
+                }
+            }
+
+            // Постеры с ОРИГИНАЛЬНЫМИ мемами
+            drawMemePoster('doge', 80, 120, 'ДОЖ', '#ffd700', 'wow');
+            drawMemePoster('pepe', canvas.width - 220, 120, 'ПЕПЕ', '#4a8c3f', 'feels');
+            drawMemePoster('wojak', canvas.width/2 - 70, 180, 'ВОДЖАК', '#d4c5b2', 'почему');
+        }
+
+        function drawMemePoster(meme, x, y, name, color, subtext) {
+            ctx.save();
+
+            // Рамка
+            ctx.fillStyle = '#2a1f14';
+            ctx.fillRect(x - 50, y - 60, 140, 160);
+            ctx.fillStyle = '#1a100a';
+            ctx.fillRect(x - 45, y - 55, 130, 150);
+
+            // Изображение мема
+            if (memeImages[meme]) {
+                ctx.drawImage(memeImages[meme], 0, 0, 200, 200, x - 30, y - 40, 100, 100);
+            }
+
+            // Название
+            ctx.fillStyle = color;
+            ctx.font = 'bold 16px Impact';
+            ctx.textAlign = 'center';
+            ctx.fillText(name, x + 20, y + 80);
+
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Comic Sans MS';
+            ctx.fillText(subtext, x + 20, y + 100);
+
+            // Следящие глаза (эффект)
+            const eyeX = x + 15;
+            const eyeY = y + 15;
+            const dx = mouseX - eyeX;
+            const dy = mouseY - eyeY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+
+            if (dist > 0) {
+                const pupilX = (dx / dist) * 3;
+                const pupilY = (dy / dist) * 3;
+
+                ctx.fillStyle = '#ff0000';
+                ctx.beginPath();
+                ctx.arc(eyeX + pupilX, eyeY + pupilY, 3, 0, Math.PI * 2);
+                ctx.arc(eyeX + 20 + pupilX, eyeY + pupilY, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.restore();
+        }
+
+        function drawDoors() {
+            // Левая дверь
+            const leftGradient = ctx.createLinearGradient(0, 200, 150, 200);
+            leftGradient.addColorStop(0, leftDoorClosed ? '#111' : '#3a3a3a');
+            leftGradient.addColorStop(1, leftDoorClosed ? '#0a0a0a' : '#2a2a2a');
+            ctx.fillStyle = leftGradient;
+            ctx.fillRect(0, 200, 150, 400);
+
+            ctx.fillStyle = '#2a2a2a';
+            ctx.fillRect(145, 200, 10, 400);
+            ctx.fillRect(0, 195, 155, 10);
+
+            if (!leftDoorClosed) {
+                ctx.fillStyle = '#666';
+                ctx.beginPath();
+                ctx.arc(140, 400, 8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Правая дверь
+            const rightGradient = ctx.createLinearGradient(canvas.width - 150, 200, canvas.width, 200);
+            rightGradient.addColorStop(0, rightDoorClosed ? '#0a0a0a' : '#2a2a2a');
+            rightGradient.addColorStop(1, rightDoorClosed ? '#111' : '#3a3a3a');
+            ctx.fillStyle = rightGradient;
+            ctx.fillRect(canvas.width - 150, 200, 150, 400);
+
+            ctx.fillStyle = '#2a2a2a';
+            ctx.fillRect(canvas.width - 155, 200, 10, 400);
+            ctx.fillRect(canvas.width - 150, 195, 150, 10);
+
+            if (!rightDoorClosed) {
+                ctx.fillStyle = '#666';
+                ctx.beginPath();
+                ctx.arc(canvas.width - 140, 400, 8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function drawHallway(side) {
+            const x = side === 'left' ? 0 : canvas.width - 300;
+            const lightOn = side === 'left' ? leftLightOn : rightLightOn;
+
+            ctx.fillStyle = lightOn ? '#1a1a1a' : '#050505';
+            ctx.fillRect(x, 200, 150, 400);
+
+            if (lightOn) {
+                // Градиент света
+                const gradient = ctx.createRadialGradient(x + 75, 350, 20, x + 75, 350, 200);
+                gradient.addColorStop(0, 'rgba(255, 255, 200, 0.15)');
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(x, 200, 150, 400);
+
+                // Мем в коридоре
+                const memeInHallway = side === 'left' ? 'doge' : 'pepe';
+                const position = memePositions[memeInHallway];
+
+                if (position >= 1 && memeImages[memeInHallway]) {
+                    const memeX = x + 25;
+                    const memeY = 280;
+
+                    ctx.drawImage(memeImages[memeInHallway], 0, 0, 200, 200,
+                                memeX, memeY, 100, 100);
+
+                    // Жуткие глаза при приближении
+                    if (position >= 2) {
+                        ctx.fillStyle = '#ff0000';
+                        ctx.shadowColor = '#ff0000';
+                        ctx.shadowBlur = 20;
+                        ctx.beginPath();
+                        ctx.arc(memeX + 30, memeY + 30, 10, 0, Math.PI * 2);
+                        ctx.arc(memeX + 70, memeY + 30, 10, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                }
+            }
+        }
+
+        function drawHUD() {
+            // Шкала энергии
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(10, canvas.height - 40, 300, 30);
+
+            const powerWidth = (power / 100) * 296;
+            let barColor;
+            if (power > 50) barColor = '#00ff00';
+            else if (power > 25) barColor = '#ffff00';
+            else barColor = '#ff0000';
+
+            const powerGradient = ctx.createLinearGradient(12, 0, powerWidth + 12, 0);
+            powerGradient.addColorStop(0, barColor);
+            powerGradient.addColorStop(1, '#000');
+            ctx.fillStyle = powerGradient;
+            ctx.fillRect(12, canvas.height - 38, powerWidth, 26);
+
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 18px Impact';
+            ctx.textAlign = 'center';
+            ctx.fillText(`ЭНЕРГИЯ: ${Math.floor(power)}%`, 160, canvas.height - 18);
+
+            // Время
+            let timeStr;
+            if (hour === 12) timeStr = '12:00 AM';
+            else if (hour < 6) timeStr = `${hour}:00 AM`;
+            else timeStr = `${hour}:00 AM`;
+
+            ctx.font = 'bold 48px Impact';
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            ctx.fillText(timeStr, canvas.width - 120, 50);
+
+            // Версия камеры
+            ctx.font = '14px Courier New';
+            ctx.fillStyle = '#00ff00';
+            ctx.fillText('● REC ● CAM 1A', canvas.width/2, 25);
+        }
+
+        function drawVignette() {
+            const gradient = ctx.createRadialGradient(
+                canvas.width/2, canvas.height/2, canvas.width/3,
+                canvas.width/2, canvas.height/2, canvas.width/1.3
+            );
+            gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.85)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function drawFilmGrain() {
+            staticNoise.forEach(noise => {
+                ctx.fillStyle = `rgba(255, 255, 255, ${noise.alpha})`;
+                ctx.fillRect(noise.x, noise.y, 2, 2);
+
+                noise.x = (noise.x + noise.speed) % canvas.width;
+                noise.y = (noise.y + noise.speed * 0.5) % canvas.height;
+            });
+        }
+
+        function drawJumpscare() {
+            if (!jumpscareActive) return;
+
+            // Вспышка
+            const flashAlpha = Math.random() * 0.7 + 0.3;
+            ctx.fillStyle = `rgba(255, 0, 0, ${flashAlpha})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Используем скример-версию мема
+            const scaryMeme = jumpscareMeme + '_scary';
+            if (memeImages[scaryMeme]) {
+                const size = 500 + Math.sin(Date.now() * 0.01) * 50;
+                const x = canvas.width/2 - size/2 + (Math.random() - 0.5) * 100;
+                const y = canvas.height/2 - size/2 + (Math.random() - 0.5) * 100;
+
+                ctx.shadowColor = '#ff0000';
+                ctx.shadowBlur = 50;
+                ctx.drawImage(memeImages[scaryMeme], 0, 0, 400, 400, x, y, size, size);
+                ctx.shadowBlur = 0;
+            }
+
+            // Текст скримера
+            ctx.fillStyle = '#ff0000';
+            ctx.font = 'bold 72px Impact';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#000';
+            ctx.shadowBlur = 20;
+
+            const texts = {
+                'pepe': 'ШНАЙНЕ ВАТА ФА!!!',
+                'doge': 'ТАКОЙ СТРАШНЫЙ WOW!!!',
+                'wojak': 'ЗАЧЕМ ТЫ ЭТО СДЕЛАЛ?!',
+                'chad': 'СЛАБАК!!!'
+            };
+
+            if (Math.random() < 0.8) {
+                ctx.fillText(texts[jumpscareMeme] || 'ААААА!!!', canvas.width/2, canvas.height - 80);
+            }
+
+            ctx.shadowBlur = 0;
+
+            jumpscareTimer--;
+            if (jumpscareTimer <= 0) {
+                jumpscareActive = false;
+                gameState = 'game_over';
+                gameOverAlpha = 0;
+            }
+        }
+
+        function drawButtons() {
+            if (gameState === 'playing') {
+                leftDoorButton.text = leftDoorClosed ? 'ЗАКРЫТО' : 'ОТКРЫТО';
+                rightDoorButton.text = rightDoorClosed ? 'ЗАКРЫТО' : 'ОТКРЫТО';
+
+                leftDoorButton.color = leftDoorClosed ? '#1a0000' : '#333';
+                rightDoorButton.color = rightDoorClosed ? '#1a0000' : '#333';
+
+                leftLightButton.color = leftLightOn ? '#ffff00' : '#332200';
+                rightLightButton.color = rightLightOn ? '#ffff00' : '#332200';
+
+                leftDoorButton.update(mouseX, mouseY);
+                rightDoorButton.update(mouseX, mouseY);
+                leftLightButton.update(mouseX, mouseY);
+                rightLightButton.update(mouseX, mouseY);
+
+                leftDoorButton.draw(ctx);
+                rightDoorButton.draw(ctx);
+                leftLightButton.draw(ctx);
+                rightLightButton.draw(ctx);
+            }
+        }
+
+        // ===== ИГРОВОЙ ЦИКЛ =====
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (gameState === 'menu') {
+                drawBackground();
+
+                // Заголовок
+                ctx.fillStyle = '#ff0000';
+                ctx.font = 'bold 64px Impact';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = '#ff0000';
+                ctx.shadowBlur = 30;
+
+                const pulse = Math.sin(Date.now() * 0.002) * 10;
+                ctx.fillText('МЕМНЫЕ НОЧИ', canvas.width/2, canvas.height/3 + pulse);
+                ctx.font = 'bold 48px Impact';
+                ctx.fillText('У ФРЕДДИ', canvas.width/2, canvas.height/3 + 60 + pulse);
+                ctx.shadowBlur = 0;
+
+                // Мемы в меню
+                if (memeImages['pepe']) {
+                    ctx.drawImage(memeImages['pepe'], 0, 0, 200, 200, 100, canvas.height - 250, 120, 120);
+                }
+                if (memeImages['doge']) {
+                    ctx.drawImage(memeImages['doge'], 0, 0, 200, 200, canvas.width - 220, canvas.height - 250, 120, 120);
+                }
+
+                ctx.fillStyle = '#fff';
+                ctx.font = '24px Impact';
+                ctx.fillText('ОРИГИНАЛЬНЫЕ МЕМЫ • РЕАЛИСТИЧНЫЙ ХОРРОР', canvas.width/2, canvas.height/3 + 120);
+
+                startButton.update(mouseX, mouseY);
+                startButton.draw(ctx);
+
+                drawVignette();
+                drawFilmGrain();
+
+            } else if (gameState === 'playing') {
+                drawBackground();
+                drawOffice();
+                drawDoors();
+                drawHallway('left');
+                drawHallway('right');
+                drawHUD();
+                drawButtons();
+                drawVignette();
+                drawFilmGrain();
+
+                if (jumpscareActive) {
+                    drawJumpscare();
+                }
+
+                // Игровая логика
+                if (!jumpscareActive) {
+                    // Расход энергии
+                    if (leftDoorClosed || rightDoorClosed) power -= 0.04;
+                    if (leftLightOn || rightLightOn) power -= 0.03;
+                    power -= 0.015;
+
+                    if (power <= 0) {
+                        power = 0;
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                        ctx.fillStyle = '#ff0000';
+                        ctx.font = 'bold 60px Impact';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('⚡ НЕТ ЭНЕРГИИ! ⚡', canvas.width/2, canvas.height/2);
+
+                        if (Math.random() < 0.03) {
+                            const memes = ['pepe', 'doge', 'wojak', 'chad'];
+                            triggerJumpscare(memes[Math.floor(Math.random() * memes.length)]);
+                        }
+                    }
+
+                    // Движение мемов
+                    if (Math.random() < 0.01) {
+                        const memes = ['pepe', 'doge', 'wojak', 'chad'];
+                        const meme = memes[Math.floor(Math.random() * memes.length)];
+                        memePositions[meme] = Math.min(2, memePositions[meme] + 1);
+                    }
+
+                    // Сердцебиение при низкой энергии
+                    if (power < 30 && Math.random() < 0.02) {
+                        sound.playHeartbeat();
+                    }
+
+                    // Случайные скримеры
+                    if (Math.random() < 0.003) {
+                        const leftMeme = memePositions['doge'] >= 2;
+                        const rightMeme = memePositions['pepe'] >= 2;
+
+                        if (leftMeme && !leftDoorClosed) {
+                            triggerJumpscare('doge');
+                        } else if (rightMeme && !rightDoorClosed) {
+                            triggerJumpscare('pepe');
+                        } else if (memePositions['wojak'] >= 2) {
+                            triggerJumpscare('wojak');
+                        } else if (memePositions['chad'] >= 2) {
+                            triggerJumpscare('chad');
+                        }
+                    }
+
+                    // Сброс позиций при закрытых дверях
+                    if (leftDoorClosed) memePositions['doge'] = 0;
+                    if (rightDoorClosed) memePositions['pepe'] = 0;
+                }
+
+            } else if (gameState === 'game_over') {
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                gameOverAlpha = Math.min(255, gameOverAlpha + 3);
+
+                ctx.fillStyle = `rgba(255, 0, 0, ${gameOverAlpha / 255})`;
+                ctx.font = 'bold 80px Impact';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = '#ff0000';
+                ctx.shadowBlur = 30;
+                ctx.fillText('GAME OVER', canvas.width/2, canvas.height/3);
+                ctx.shadowBlur = 0;
+
+                ctx.fillStyle = '#fff';
+                ctx.font = '36px Impact';
+                ctx.fillText('МЕМЫ ПОБЕДИЛИ...', canvas.width/2, canvas.height/2);
+
+                restartButton.update(mouseX, mouseY);
+                restartButton.draw(ctx);
+
+                // Скример-мем на экране проигрыша
+                if (memeImages['pepe_scary'] && gameOverAlpha > 100) {
+                    ctx.drawImage(memeImages['pepe_scary'], 0, 0, 400, 400,
+                                canvas.width/2 - 100, canvas.height/2 - 50, 200, 200);
+                }
+
+                drawFilmGrain();
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Запуск
+        createMemeImages();
+        gameLoop();
+
+        // Инициализация звука при первом клике
+        document.addEventListener('click', () => {
+            sound.init();
+            if (!ambientNodes && sound.initialized) {
+                ambientNodes = sound.playAmbient();
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>
